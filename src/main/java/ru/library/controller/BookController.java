@@ -1,7 +1,10 @@
 package ru.library.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,10 +27,55 @@ public class BookController {
     }
 
 
+
 	@GetMapping
-	public String getAllBooks(Model model) {
-		model.addAttribute("books", booksService.getAllBooks());
-		return "books/index_book";
+	public String getAllBooks(Model model, @RequestParam(name = "page", required = false) String currentPage,
+							  @RequestParam(name = "books_per_page", required = false) String booksPerPage,
+							  @RequestParam(name = "sort_by_year", required = false) String sortByYear) {
+		if (booksPerPage == null) {
+
+			if (sortByYear != null && sortByYear.equals("true")) {
+				model.addAttribute("books", booksService.getAllBooksSortedByYear());
+			} else model.addAttribute("books", booksService.getAllBooks());
+        }
+		else {
+			if (currentPage == null) {
+				if (sortByYear != null && sortByYear.equals("true")) {
+					setAppropriateAttributesForModel(model, "0", booksPerPage, true);
+				} else setAppropriateAttributesForModel(model, "0", booksPerPage);
+            } else {
+				if (sortByYear != null && sortByYear.equals("true")) {
+					setAppropriateAttributesForModel(model, currentPage, booksPerPage, true);
+				}  else setAppropriateAttributesForModel(model, currentPage, booksPerPage);
+            }
+        }
+        return "books/index_book";
+    }
+
+	private void setAppropriateAttributesForModel(Model model, String currentPageParam, String booksPerPageParam, boolean sortedByYear) {
+		int currentPage = Integer.parseInt(currentPageParam);
+		int booksPerPage = Integer.parseInt(booksPerPageParam);
+
+		// ! Sorted by year
+		Page<Book> bookPage = booksService.getAllBooksSortedByYear(currentPage, booksPerPage);
+
+		model.addAttribute("books", bookPage.getContent());
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("totalPages", bookPage.getTotalPages());
+		model.addAttribute("booksPerPage", booksPerPage);
+	}
+
+	private void setAppropriateAttributesForModel(Model model, String currentPageParam, String booksPerPageParam) {
+		int currentPage = Integer.parseInt(currentPageParam);
+		int booksPerPage = Integer.parseInt(booksPerPageParam);
+
+		// ! Not sorted in any way
+		Page<Book> bookPage = booksService.getAllBooks(PageRequest.of(currentPage, booksPerPage));
+
+		model.addAttribute("books", bookPage.getContent());
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("totalPages", bookPage.getTotalPages());
+		model.addAttribute("booksPerPage", booksPerPage);
 	}
 
 	@GetMapping("/new")

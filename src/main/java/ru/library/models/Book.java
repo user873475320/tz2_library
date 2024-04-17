@@ -4,7 +4,6 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Objects;
 
-
 @Entity
 @Table(name = "book")
 public class Book {

@@ -5,10 +5,21 @@
     <title>All books</title>
 </head>
 <body>
-<div th:each="book : ${books}">
-    <a th:href="@{/books/{id}(id=${book.getBookId()})}"
-       th:text="${book.getName() + ', ' + book.getAuthor() + ', ' + book.getYear()}">user</a>
-</div>
+    <h1>Books</h1>
+        <div th:each="book : ${books}">
+            <a th:href="@{/books/{id}(id=${book.getBookId()})}"
+               th:text="${book.name} + ', ' + ${book.author} + ', ' + ${book.year}">book</a>
+        </div>
+
+    <div th:if="${totalPages > 1}">
+        <ul class="pagination">
+            <li th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
+                th:class="${pageNumber == currentPage} ? 'active'">
+                <a th:href="@{/books(page=${pageNumber}, books_per_page=${booksPerPage})}"
+                   th:text="${pageNumber + 1}"></a>
+            </li>
+        </ul>
+    </div>
 
 <br/>
 <hr/>
