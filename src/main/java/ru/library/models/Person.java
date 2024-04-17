@@ -29,8 +29,7 @@ public class Person {
 	@OneToMany(mappedBy = "owner")
 	private List<Book> books;
 
-	public Person(int personId, String name, int yearOfBirthday) {
-		this.personId = personId;
+	public Person(String name, int yearOfBirthday) {
 		this.name = name;
 		this.yearOfBirthday = yearOfBirthday;
 	}

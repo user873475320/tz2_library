@@ -8,14 +8,10 @@ import java.util.Objects;
 @Entity
 @Table(name = "book")
 public class Book {
-
 	@Id
 	@Column(name = "book_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int bookId;
-
-	@Column(name="person_id")
-	private int personId;
 
 	@NotEmpty(message = "Title should not be empty")
 	@Size(min = 1, max = 100, message = "Title of the book should be between 1 and 100 characters")
@@ -35,15 +31,8 @@ public class Book {
 	@JoinColumn(name="person_id")
 	private Person owner;
 
-	public Book() {
-	}
 
-	public Book(int bookId, int personId, String name, String author, int year) {
-		this.bookId = bookId;
-		this.personId = personId;
-		this.name = name;
-		this.author = author;
-		this.year = year;
+	public Book() {
 	}
 
 	public Book(String name, String author, int year) {
@@ -68,13 +57,6 @@ public class Book {
 		this.bookId = bookId;
 	}
 
-	public int getPersonId() {
-		return personId;
-	}
-
-	public void setPersonId(int personId) {
-		this.personId = personId;
-	}
 
 	public String getName() {
 		return name;
@@ -104,7 +86,6 @@ public class Book {
 	public String toString() {
 		return "Book{" +
 				"book_id=" + bookId +
-				", person_id=" + personId +
 				", name='" + name + '\'' +
 				", author='" + author + '\'' +
 				", year=" + year +
@@ -116,11 +97,11 @@ public class Book {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Book book = (Book) o;
-		return bookId == book.bookId && personId == book.personId && year == book.year && Objects.equals(name, book.name) && Objects.equals(author, book.author);
+		return bookId == book.bookId && year == book.year && Objects.equals(name, book.name) && Objects.equals(author, book.author);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(bookId, personId, name, author, year);
+		return Objects.hash(bookId, name, author, year);
 	}
 }

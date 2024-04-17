@@ -21,7 +21,7 @@
     <form th:method="PATCH" th:action="@{/books/{id}/assign(id=${book.getBookId()})}">
         <label for="bookBorrower">Choose a person:</label>
 
-        <select th:object="${book}" th:field="*{personId}" id="bookBorrower">
+        <select th:object="${person}" th:field="*{personId}" id="bookBorrower">
             <option th:each="person : ${people}" th:value="${person.getPersonId()}" th:text="${person.getName()}"></option>
         </select>
 
