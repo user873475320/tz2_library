@@ -70,6 +70,10 @@ public class BooksService {
         return booksRepository.findAll();
     }
 
+    public List<Book> getBookStartingWith(String prefix) {
+        return booksRepository.findBookByNameStartingWith(prefix);
+    }
+
     @Transactional
     public void addBook(Book newBook) {
         booksRepository.save(newBook);

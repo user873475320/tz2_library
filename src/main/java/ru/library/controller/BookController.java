@@ -14,6 +14,8 @@ import ru.library.models.Person;
 import ru.library.services.BooksService;
 import ru.library.services.PeopleService;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/books")
 public class BookController {
@@ -27,13 +29,11 @@ public class BookController {
     }
 
 
-
 	@GetMapping
 	public String getAllBooks(Model model, @RequestParam(name = "page", required = false) String currentPage,
 							  @RequestParam(name = "books_per_page", required = false) String booksPerPage,
 							  @RequestParam(name = "sort_by_year", required = false) String sortByYear) {
 		if (booksPerPage == null) {
-
 			if (sortByYear != null && sortByYear.equals("true")) {
 				model.addAttribute("books", booksService.getAllBooksSortedByYear());
 			} else model.addAttribute("books", booksService.getAllBooks());
@@ -100,6 +100,19 @@ public class BookController {
 		return "books/edit_book";
 	}
 
+	@GetMapping("/search")
+	public String getSearchPage(Model model, @RequestParam(required = false) String title) {
+		if (title == null) {
+			return "books/search_book";
+		} else {
+			List<Book> foundBooks = booksService.getBookStartingWith(title);
+			System.out.println(foundBooks);
+			model.addAttribute("foundBooks", foundBooks);
+
+			return "books/search_book";
+		}
+	}
+
 
 	@PostMapping()
 	public String createBook(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult) {
@@ -111,6 +124,19 @@ public class BookController {
 
 		return "redirect:/books";
 	}
+
+//	@PostMapping("/search")
+//	public String searchBook(@ModelAttribute("book") Book book, Model model, BindingResult bindingResult) {
+//		if (bindingResult.hasErrors()) {
+//			return "books/search_book";
+//		}
+//
+//		if (book.getName() != null) {
+//			List<Book> foundBooks = booksService.getBookStartingWith(book.getName());
+//			model.addAttribute("foundBooks", foundBooks);
+//		}
+//		return "books/search_book";
+//	}
 
 
 	@PatchMapping("/{id}")
