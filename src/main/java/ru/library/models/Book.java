@@ -2,6 +2,7 @@ package ru.library.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -30,6 +31,13 @@ public class Book {
 	@JoinColumn(name="person_id")
 	private Person owner;
 
+	@Column(name = "created_at")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdAt;
+
+	@Transient
+	private boolean isOverdue;
+
 
 	public Book() {
 	}
@@ -38,6 +46,23 @@ public class Book {
 		this.name = name;
 		this.author = author;
 		this.year = year;
+	}
+
+
+	public boolean isOverdue() {
+		return isOverdue;
+	}
+
+	public void setOverdue(boolean overdue) {
+		isOverdue = overdue;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
 	public Person getOwner() {

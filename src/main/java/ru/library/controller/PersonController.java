@@ -7,8 +7,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.library.models.Person;
-//import ru.library.dao.BookDAO;
-//import ru.library.dao.PersonDAO;
 import ru.library.services.PersonValidator;
 import ru.library.services.BooksService;
 import ru.library.services.PeopleService;
@@ -40,7 +38,7 @@ public class PersonController {
 
 	@GetMapping("/{id}")
 	public String getPersonById(Model model, @PathVariable("id") int id) {
-		model.addAttribute("personBooks", booksService.getAllBooksTakenByPerson(id));
+		model.addAttribute("books", booksService.getAllBooksTakenByPerson(id));
 		model.addAttribute("person", peopleService.getPersonByPersonId(id));
 		return "people/show_person";
 	}

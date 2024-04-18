@@ -125,20 +125,6 @@ public class BookController {
 		return "redirect:/books";
 	}
 
-//	@PostMapping("/search")
-//	public String searchBook(@ModelAttribute("book") Book book, Model model, BindingResult bindingResult) {
-//		if (bindingResult.hasErrors()) {
-//			return "books/search_book";
-//		}
-//
-//		if (book.getName() != null) {
-//			List<Book> foundBooks = booksService.getBookStartingWith(book.getName());
-//			model.addAttribute("foundBooks", foundBooks);
-//		}
-//		return "books/search_book";
-//	}
-
-
 	@PatchMapping("/{id}")
 	public String editBookByBookId(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult, @PathVariable("id") int bookId) {
 		if (bindingResult.hasErrors()) {

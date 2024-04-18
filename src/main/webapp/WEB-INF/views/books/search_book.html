@@ -18,7 +18,6 @@
 
 <br/>
 <div th:if="${foundBooks}" th:each="book : ${foundBooks}">
-<!--    <p th:text="${book.name + ', ' + book.author + ', ' + book.year}"></p>-->
     <a th:href="@{/books/{id}(id=${book.getBookId()})}"
        th:text="${book.name} + ', ' + ${book.author} + ', ' + ${book.year}">book</a>
     <p th:if="${book.getOwner() != null}" th:text="${book.getOwner().name + ' is borrower of the book now'}"></p>

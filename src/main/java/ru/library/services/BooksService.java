@@ -9,10 +9,7 @@ import ru.library.models.Person;
 import ru.library.repositories.BooksRepository;
 import ru.library.repositories.PeopleRepository;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,28 +24,22 @@ public class BooksService {
         this.peopleRepository = peopleRepository;
     }
 
-//    public Page<Book> findPaginated(Pageable pageable, List<Book> books) {
-//        int pageSize = pageable.getPageSize();
-//        int currentPage = pageable.getPageNumber();
-//        int startItem = currentPage * pageSize;
-//        List<Book> list;
-//
-//        if (books.size() < startItem) {
-//            list = Collections.emptyList();
-//        } else {
-//            int toIndex = Math.min(startItem + pageSize, books.size());
-//            list = books.subList(startItem, toIndex);
-//        }
-//
-//        Page<Book> bookPage = new PageImpl<Book>(list, PageRequest.of(currentPage, pageSize), books.size());
-//
-//        return bookPage;
-//    }
+    private static boolean isOverdue(Date currentDate, Date dateOfTakingBook) {
+        return ((currentDate.getTime() - dateOfTakingBook.getTime()) / (24 * 60 * 60 * 1000)) >= 10;
+    }
 
     public List<Book> getAllBooksTakenByPerson(int id) {
         Optional<Person> person = peopleRepository.findById(id);
         if (person.isPresent()) {
-            return booksRepository.findAllByOwner(person.get());
+            List<Book> books = booksRepository.findAllByOwner(person.get());
+            for (Book book : books) {
+                if (book.getCreatedAt() == null) {
+                    book.setOverdue(false);
+                } else {
+                    book.setOverdue(isOverdue(new Date(), book.getCreatedAt()));
+                }
+            }
+            return books;
         }
 
         return null;
@@ -74,14 +65,14 @@ public class BooksService {
         return booksRepository.findBookByNameStartingWith(prefix);
     }
 
-    @Transactional
-    public void addBook(Book newBook) {
-        booksRepository.save(newBook);
-    }
-
     public Book getBookById(int id) {
         Optional<Book> book = booksRepository.findById(id);
         return book.orElse(null);
+    }
+
+    @Transactional
+    public void addBook(Book newBook) {
+        booksRepository.save(newBook);
     }
 
     @Transactional
@@ -99,11 +90,10 @@ public class BooksService {
 
     @Transactional
     public void changeBookBorrower(Person newBorrower, int bookId) {
-//        jdbcTemplate.update("UPDATE book SET person_id=? WHERE book_id=?",
-//                updatedBook.getPersonId(), bookId);
         Optional<Book> book = booksRepository.findById(bookId);
         if (book.isPresent()) {
             book.get().setOwner(newBorrower);
+            book.get().setCreatedAt(new Date());
             newBorrower.getBooks().add(book.get());
         }
     }
